@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import os
 import datetime
-from server_config import SCOPES, CREDENTIALS_PATH, TOKEN_PATH, TOKEN_FOLDER
+from server_settings import SCOPES, CREDENTIALS_PATH, TOKEN_PATH, TOKEN_FOLDER
 
 def authenticate():
     creds = None

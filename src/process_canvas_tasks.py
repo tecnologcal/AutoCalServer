@@ -1,7 +1,7 @@
 import requests
 import json
 from datetime import datetime
-from server_config import CANVAS_API_KEY, CURRENT_CANVAS_ENROLLMENT_ID
+from server_settings import CANVAS_API_KEY, CURRENT_CANVAS_ENROLLMENT_ID
 
 def get_canvas_data():
     base_url = "https://mvla.instructure.com"
