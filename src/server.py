@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
-from processGoogleTasks import get_google_classroom_data
-from processCanvasTasks import get_canvas_data
+from process_google_tasks import get_google_classroom_data
+from process_canvas_tasks import get_canvas_data
 
 app = Flask(__name__)
 
