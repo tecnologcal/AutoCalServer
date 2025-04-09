@@ -4,7 +4,19 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import os
 import datetime
+import json
+import html
+from bs4 import BeautifulSoup
 from server_settings import SCOPES, CREDENTIALS_PATH, TOKEN_PATH, TOKEN_FOLDER
+
+def clean_html(html_content):
+    if html_content is None:
+        return None
+    decoded_content = html.unescape(html_content)
+    soup = BeautifulSoup(decoded_content, "html.parser")
+    processed_text = soup.get_text()
+    cleaned_content = processed_text.replace("\n", " ").replace("\xa0", " ").strip()
+    return cleaned_content
 
 def authenticate():
     creds = None
@@ -41,7 +53,6 @@ def get_google_classroom_data():
             course_name = course.get("name")
             course_id = course.get("id")
             processed_courses[course_name] = course_id
-
     today = datetime.datetime.today()
     all_info = {}
 
@@ -68,10 +79,20 @@ def get_google_classroom_data():
                     continue
 
                 assignment_name = assignment.get("title")
-                course_assignment_list[assignment_name] = due_datetime.strftime("%Y-%m-%d %I:%M")
+                description = assignment.get("description", "No description available")  
+                description = clean_html(description)  
+                if description is None:
+                    description = "No description"
+                course_assignment_list[assignment_name] = {
+                    "due_date": due_datetime.strftime("%Y-%m-%d %I:%M"),
+                    "description": description
+                }
         except Exception as e:
             return {"error": f"Error fetching assignments for {course_name}: {str(e)}"}
 
         all_info[course_name] = course_assignment_list
 
+    #print("google info")
+    #print(json.dumps(all_info, indent=2))
     return all_info
+

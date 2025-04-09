@@ -1,22 +1,24 @@
 from flask import Flask, jsonify
-from process_google_tasks import get_google_classroom_data
-from process_canvas_tasks import get_canvas_data
-
+from sync_todoist import get_todoist_data, push_task_list_to_todoist
+from request_weather_data import get_5day_forecast, get_current_weather, geolocate
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/tasks")
 def get_task_payload():
     
-    google_tasks = get_google_classroom_data()
-    canvas_tasks = get_canvas_data()
-
+    push_task_list_to_todoist()
     
-    task_payload = {}
-    task_payload.update(google_tasks)
-    task_payload.update(canvas_tasks)
-
     
-    return jsonify(task_payload)
+    return jsonify(get_todoist_data())
 
+@app.route("/weather")
+def get_weather_payload():
+    coords = geolocate()
+    weather_payload = get_current_weather(coords)
+    weather_payload.update(get_5day_forecast(coords))
+    
+    return jsonify(weather_payload)
+    
+    
 if __name__ == "__main__":
     app.run()
